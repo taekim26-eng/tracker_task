@@ -1,0 +1,49 @@
+{
+  "repository": "https://github.com/hailanyi/3D-Multi-Object-Tracker",
+  "commit": "d37df41c8e512e14c198cb18a4609ed66253d7a1",
+  "files": {
+    "tracker/tracker.py": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/tracker/tracker.py",
+      "sha256": "ae33ee166a6e26a570872a1ec980701a691ed613ad8dbd8caeaa8ded29fda3c7"
+    },
+    "tracker/trajectory.py": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/tracker/trajectory.py",
+      "sha256": "c20c8e9d6122108ac65e2678b2e58ceeb4aa050cd3b877228863665ec280a492"
+    },
+    "tracker/object.py": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/tracker/object.py",
+      "sha256": "e77879bc6eb408a70d0cbdcf9633b2b909e1dad5f0a2cee23d168785e1492150"
+    },
+    "tracker/box_op.py": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/tracker/box_op.py",
+      "sha256": "802c39d07911a020202a85849e93adf00b8b4b0df1a90938fcf8deea13c1429f"
+    },
+    "tracker/config.py": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/tracker/config.py",
+      "sha256": "4396ee85d63907a64ef0aac65a3c033ae179df929bab0a5b1b8875b9faefcc6a"
+    },
+    "config/online/casa_mot.yaml": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/config/online/casa_mot.yaml",
+      "sha256": "06e6fab19de561feb2cbbf9d60a348b367b5da6453cbd09d027930157ad7f43f"
+    },
+    "LICENSE": {
+      "url": "https://raw.githubusercontent.com/hailanyi/3D-Multi-Object-Tracker/d37df41c8e512e14c198cb18a4609ed66253d7a1/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  },
+  "restoration": {
+    "manager": "Restored byte-identical on 2026-10-09; see current_modifications",
+    "non_ekf_parameters": "config/online/casa_mot.yaml",
+    "ekf": "Existing VesselCTRAExtendedKalmanFilter retained byte-for-byte",
+    "trajectory": "Only initialization, predict, update, and EKF configuration integration differ",
+    "public_api": "Original tracking(...) -> (boxes, ids); target_labels and return_info removed",
+    "visualization": "SeePerSea/RViz helpers are separate adapters, not upstream tracking logic"
+  },
+  "preserved_ekf_sha256": "b1cf17d950515b36a5362f06d7cf0d152a1f0b12947b03e0b53573ac39b5b7a1",
+  "current_modifications": {
+    "date": "2026-10-10",
+    "tracker.py": "Upstream except compute_cost_map/association: Hungarian global assignment on XY centre distance, association_distance_threshold gate (10 m), detections with score <= update_score excluded from matching, new IDs only for score > init_score",
+    "extended_kalman_filter.py": "Vessel CTRV-EKF (midpoint constant turn rate and velocity; acceleration slots kept at zero for the state layout). Changed from CTRA and adaptive_size removed on 2026-10-12",
+    "unchanged": "object.py, box_op.py, config.py byte-identical; tracking(), trajectores_prediction(), trajectories_update_init(), post_processing() as upstream"
+  }
+}

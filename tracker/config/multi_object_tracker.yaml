@@ -1,0 +1,67 @@
+# CasTrack (commit d37df41) track management with maritime association and
+# the vessel CTRV-EKF (constant turn rate and velocity). Values were compared
+# on the assignment bags (filtered~filtered4) and on navigation scenarios that
+# replay their measured detection noise (see tuning/).
+# state_func_covariance / measure_func_covariance remain for upstream
+# compatibility; the vessel EKF uses the explicit ekf variances below.
+
+state_func_covariance: 100
+measure_func_covariance: 0.001
+LiDAR_scanning_frequency: 10            # bags: 10.01 Hz
+# Upstream value. The prediction score is still maintained by CasTrack but no
+# longer weights the association cost.
+prediction_score_decay: 0.02
+# upstream 12 (1.2 s). 40 frames (4 s, 20 until 2026-10-29) bridges 99.5 % of
+# the detection gaps measured on the bags (12 frames: 92.8 %, 20 frames: 96.9 %).
+max_prediction_num: 40
+# A one-hit candidate is discarded after 0.5 s (upstream 4).
+max_prediction_num_for_new_object: 5
+input_score: 0
+# A detection needs score > init_score to start a track and > update_score to
+# be matched to an existing track (lower scores never reserve an ID).
+init_score: 0.30
+update_score: 0.10
+post_score: 1.0
+latency: 0
+
+# Association cost.  mahalanobis: d^2 = v^T S^-1 v of the XY centre,
+# S = predicted XY covariance + measurement XY noise of each track's EKF; pairs
+# with d^2 above association_gate_chi2 are never matched (9.21 = chi-square
+# 99 % for 2 DoF).  euclidean: XY distance gated at
+# association_distance_threshold metres (box-centre jumps of the bags'
+# vessels <= 35 m reach 4.7 m p95; fast vessels move 1-1.5 m per frame).
+association_metric: mahalanobis
+association_gate_chi2: 9.21
+association_distance_threshold: 10.0
+# greedy: fix the gated pair with the smallest cost first (the most
+# overlapping ellipses), drop its detection and track, repeat; independent of
+# the detection input order.  hungarian: global assignment that maximises the
+# number of matches, then minimises the summed cost.
+association_matching: greedy
+
+ekf:
+  heading_period: 6.283185307179586
+  stationary_speed_threshold: 0.5
+  bootstrap_stationary_sigma_multiplier: 3.0
+  bootstrap_from_two_measurements: false
+  bootstrap_yaw_rate: false
+  max_abs_yaw_rate: 0.15
+
+  measurement_position_variance: 4.0
+  measurement_size_variance: 2.25
+  measurement_heading_variance: 0.03
+  measurement_feature_variance: 4.0
+
+  initial_position_variance: 4.0
+  initial_velocity_variance: 25.0
+  initial_yaw_rate_variance: 0.04
+  initial_size_variance: 4.0
+  initial_heading_variance: 0.12
+  initial_feature_variance: 16.0
+
+  process_position_variance: 0.10
+  process_velocity_variance: 0.05
+  process_yaw_rate_variance: 0.02
+  process_size_variance: 0.02
+  process_heading_variance: 0.01
+  process_feature_variance: 2.0
